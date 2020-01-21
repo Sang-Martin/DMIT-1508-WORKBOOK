@@ -101,6 +101,12 @@ This legend is a guide to reading and interpreting the table listings under 0NF 
     text-align: center;
 }
 
+.rg {
+    content: inline-block;
+    color: inherit;
+    font-size: 1em;
+    font-weight: bold;
+}
 .rg::before {
     content: '\007B';
     color: darkorange;
