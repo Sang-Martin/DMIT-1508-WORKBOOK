@@ -4,7 +4,7 @@
 
 ### 0NF
 
-**Customer:** (<b class="pk">CustomerNumber</b>, FirstName, LastName, Address, City, Province, PostalCode, HomePhone)
+**Customer:** <span class="md"><b class="pk">CustomerNumber</b>, FirstName, LastName, Address, City, Province, PostalCode, HomePhone</span>
 
 ### 1NF - 3NF
 
@@ -19,6 +19,24 @@
 ### 0NF
 
 **Order:** (<b class="pk">OrderNumber</b>, CustomerNumber, FirstName, LastName, Address, City, Province, PostalCode, Phone, Date, <b class="rg">ItemNumber, Description, Quantity, CurrentPrice, SellingPrice, Amount</b>, Subtotal, GST, Total)
+
+### 1NF
+
+**Order:** <span class="md"><b class="pk">OrderNumber</b>, CustomerNumber, FirstName, LastName, Address, City, Province, PostalCode, Phone, Date, Subtotal, GST, Total</span>
+
+**OrderDetails:** <span class="md"><b class="pk"><u class="fk">OrderNumber</u>, ItemNumber</b>, Description, Quantity, CurrentPrice, SellingPrice, Amount</span>
+
+### 2NF
+
+**OrderDetail:** <span class="md"><b class="pk"><u class="fk">OrderNumber</u>, <u class="fk">ItemNumber</u></b>, Quantity, SellingPrice, Amount</span>
+
+**Item:** <span class="md"><b class="pk">ItemNumber</b>, Description, CurrentPrice</span>
+
+### 3NF
+
+**Order:** <span class="md"><b class="pk">OrderNumber</b>, <u class="fk">CustomerNumber</u>, Date, Subtotal, GST, Total</span>
+
+**Customer:** <span class="md"><b class="pk">CustomerNumber</b>, FirstName, LastName, Address, City, Province, PostalCode, Phone</span>
 
 > Your lab is to be submitted as a **Markdown** (`*.md`) file using the following legend. The recommended text editor for these files is [**Visual Studio Code**](https://code.visualstudio.com), as this editor allows you to preview your markdown document as HTML. ERDs can be created using [**Lucidchart**](https://www.lucidchart.com/) and exported as `*.png` files. Check with your instructor about getting a free *Lucidchart* account to use during this course.
 
@@ -38,7 +56,7 @@ This legend is a guide to reading and interpreting the table listings under 0NF 
 
 <style type="text/css">
 
-.md{
+.md {
     display: inline-block;
     vertical-align: top;
     white-space: normal;
@@ -60,7 +78,7 @@ This legend is a guide to reading and interpreting the table listings under 0NF 
     font-weight: bold;
     display: inline-block;
     border: solid thin blue;
-    padding: 0 1px;
+    padding: 0 2px;
     position: relative;
 }
 
@@ -85,6 +103,8 @@ This legend is a guide to reading and interpreting the table listings under 0NF 
     color: green;
     font-style: italic;
     text-decoration: wavy underline green;    
+    padding: 0 2px;
+    position: relative;
 }
 
 .fk::before {
@@ -95,6 +115,7 @@ This legend is a guide to reading and interpreting the table listings under 0NF 
     bottom: -17px;
     color: darkgreen;
     border-radius: 50%;
+    background-color: #a7dea7;
     border: dashed thin green;
     width: 1.4em;
     height: 1.4em;
@@ -105,7 +126,7 @@ This legend is a guide to reading and interpreting the table listings under 0NF 
     content: inline-block;
     color: inherit;
     font-size: 1em;
-    font-weight: bold;
+    font-weight: normal;
 }
 .rg::before {
     content: '\007B';
