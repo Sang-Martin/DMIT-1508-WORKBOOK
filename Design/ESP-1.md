@@ -14,6 +14,8 @@
 
 > TODO: Place image here
 
+![Customers View](./ESP-CustomerView.png)
+
 ## Customer Orders View
 
 ### 0NF
