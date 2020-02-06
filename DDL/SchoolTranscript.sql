@@ -115,3 +115,4 @@ ALTER TABLE Students
 	ADD CONSTRAINT CK_Students_PostalCode
 		CHECK (PostalCode LIKE '[A-Z][0-9][A-Z][0-9][A-Z][0-9]')
 		-- Match for              T    4    R    1    H    2
+GO
