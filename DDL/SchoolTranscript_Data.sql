@@ -7,7 +7,7 @@ USE SchoolTranscript
 GO
 
 INSERT INTO Students(GivenName, SurName, DateOfBirth)  -- notice no Enrolled column
-VALUES ('Patsy', 'Washington', '19810310 10:34:09 PM'),
+VALUES ('Patsy', 'Gashington', '19810310 10:34:09 PM'),
 		('Kim ', 'Russell', '19920605 10:34:10 PM'),
 		('Gaxine ', 'Cooper', '19780303 10:34:11 PM'),
 		('Rene ', 'Ferguson', '19610709 10:34:12 PM'),
@@ -15,7 +15,7 @@ VALUES ('Patsy', 'Washington', '19810310 10:34:09 PM'),
 		('Jo', 'Cox', '19660704 10:34:14 PM'),
 		('Larry ', 'Lawrence', '19760506 10:34:15 PM')
 
-DELETE FROM Students
+DROP TABLE Students;
 
 SELECT * FROM Students
 
@@ -37,4 +37,4 @@ WHERE	[Name] LIKE	'%Fundamentals%'
 
 SELECT GivenName, SurName
 FROM Students
-WHERE	GivenName LIKE 'G%'
+WHERE	GivenName LIKE 'G%' OR SurName LIKE 'G%'

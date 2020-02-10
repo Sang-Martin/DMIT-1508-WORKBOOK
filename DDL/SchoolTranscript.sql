@@ -23,7 +23,8 @@ CREATE TABLE Students
 (
     StudentID       int
     CONSTRAINT PK_Students_StudentID
-    PRIMARY KEY                     NOT NULL,
+    PRIMARY KEY                     
+	IDENTITY(20200001, 1)	NOT NULL,
     GivenName       varchar(50)     NOT NULL,
     SurName         varchar(50)
 	CONSTRAINT CK_Students_Surname
