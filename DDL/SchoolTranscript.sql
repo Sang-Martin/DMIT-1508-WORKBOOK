@@ -14,13 +14,15 @@ IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'Courses')
     DROP TABLE Courses
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'StudentCourses')
     DROP TABLE StudentCourses
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'StudentCourses')
+    DROP TABLE StudentCourses
 /* === Create Tanles ===*/
 
 
 CREATE TABLE Students
 (
     StudentID       int
-    CONSTRAINT PK_Students_StudentIS
+    CONSTRAINT PK_Students_StudentID
     PRIMARY KEY                     NOT NULL,
     GivenName       varchar(50)     NOT NULL,
     SurName         varchar(50)
@@ -116,3 +118,23 @@ ALTER TABLE Students
 		CHECK (PostalCode LIKE '[A-Z][0-9][A-Z][0-9][A-Z][0-9]')
 		-- Match for              T    4    R    1    H    2
 GO
+
+-- 3) Add a default constraint for the Status column of StudentCourses.
+-- Set 'E' as the default value
+ALTER TABLE StudentCourses
+	ADD CONSTRAINT DF_StudentCourses_Status
+		DEFAULT('E') FOR [Status] -- In an Alter Table statement, the column must be specified for the default value
+GO
+								 
+/*-------------Other Odds and Ends-------------*/
+sp_help Students
+
+-- In a table, we can have some columns be "calculated" or "derived" columns
+-- where the value of the column is a calculation from other columns
+CREATE TABLE Invoice
+(
+	InvoiceID	INT		NOT NULL,
+	Subtotal	MONEY	NOT NULL,
+	GST			MONEY	NOT NULL,
+	Total		AS	Subtotal + GST	-- This is a Computed Column
+)
