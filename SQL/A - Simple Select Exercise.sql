@@ -78,21 +78,31 @@ WHERE  PositionID = 3
 SELECT  PositionID, PositionDescription
 FROM    Position
 
+--5.b	Given that the Instructor position id is 4, write a query to get the names of
+--		all the instructors from the Staff table.
+SELECT	FirstName, LastName
+FROM	Staff
+WHERE	PositionID = 4
 --6.    Select the Course Names whose course hours are less than 96
 SELECT  C.CourseName
 FROM    Course C -- I can have an alias to the table name
 WHERE   C.CourseHours < 96
+-- Real-time type with me...
+--(SQ) Create FROM Student AS S first, then type SELECT ...
+SELECT	S.FirstName, S.LastName, S.Province
+FROM	Student AS S
+
 -- Type with me the following...
 SELECT  ST.LastName, ST.DateHired, ST.DateReleased
 FROM    Staff AS ST -- The use of the AS keyword in producing table/column aliases is optional
-                    -- but it can be a good idea for readability.
+                    -- but it can be a good idea for readability. 
 -- You can use the full table name to fully-qualify your column names
 SELECT  Staff.LastName, Staff.FirstName, Staff.DateHired
 FROM    Staff
 WHERE   Staff.DateReleased IS NOT NULL
 -- NOTE: You can't mix the use of a table alias with the full name of the table
 
--- 7.   Select the studentID's, CourseID and mark where the Mark is between 70 and 80
+-- 7.   Select the studentID's, CourseID and mark where the Mark is between 70 and 80 from Registration table
 SELECT  StudentID, CourseId, Mark
 FROM    Registration
 WHERE   Mark BETWEEN 70 AND 80 -- BETWEEN is inclusive
@@ -105,6 +115,9 @@ FROM    Registration
 WHERE   WithdrawYN IS NULL -- we use IS NULL instead of = NULL, because = NULL won't work.
 
 -- 7.b. Select the student ids of students who have withdrawn from a course
+/*
+Explore the database - you can use the * for a Quick'n'Dirty check
+*/
 SELECT  StudentID
 FROM    Registration
 WHERE   WithdrawYN = 'Y'
@@ -142,10 +155,22 @@ FROM    Course
 WHERE   CourseID LIKE '____1%' -- four underscores, 1, %
 --                     DMIT158
 
---11. Select the CourseID's and CourseNames where the CourseName contains the word 'programming'
+--(SQ) 11. Select the CourseID's and CourseNames where the CourseName contains the word 'programming'
+SELECT CourseID, CourseName
+FROM Course
+WHERE	CourseName LIKE '%programming%'
 
---12. Select all the ClubNames who start with N or C.
+-- (SQ) 12. Select all the ClubNames who start with N or C.
+SELECT ClubName
+FROM	Club
+WHERE	ClubName LIKE 'N%' OR ClubName LIKE 'C%'
 
---13. Select Student Names, Street Address and City where the lastName is only 3 letters long.
+--(SQ) 13. Select Student Names, Street Address and City where the lastName is only 3 letters long.
+SELECT	S.FirstName + S.LastName AS 'Student Names', S.StreetAddress AS 'Street Address', s.City
+FROM	Student	S
+WHERE	S.LastName LIKE '___'
 
---14. Select all the StudentID's where the PaymentAmount < 500 OR the PaymentTypeID is 5
+--(SQ) 14. Select all the StudentID's where the PaymentAmount < 500 OR the PaymentTypeID is 5
+SELECT	P.StudentID
+FROM	Payment	P
+WHERE	P.Amount < 500 OR P.PaymentID = 5
