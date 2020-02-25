@@ -2,6 +2,13 @@
 USE [A01-School]
 GO
 
+-- We express relationships between tables in our design through FOREIGN KEY
+-- constraints. But those constraints simply check/restrict infomation that
+-- is stored in the Foreign Key column. It doesn't actually/physically "connect"
+-- the tables - all the tables are "independent". That means that when we try 
+-- to pull information from multiple related tables, we have to state the 
+-- connection between tables. That is, we have to state how the tables JOIN together.
+
 --1.	Select Student full names and the course ID's they are registered in.
 SELECT  FirstName + ' ' + LastName AS 'Full Name',
         CourseId
@@ -45,6 +52,7 @@ FROM    Registration R
             ON S.StudentID = R.StudentID
 WHERE   S.StudentID = 199899200
 
+
 --5.	Select the Student full name, course names and marks for studentID 199899200.
 -- TODO: Student Answer Here...
 SELECT  FirstName + ' ' + LastName AS 'Student',
@@ -54,6 +62,7 @@ FROM    Student S
     INNER JOIN Registration R ON R.StudentID = S.StudentID
     INNER JOIN Course C ON C.CourseId = R.CourseId
 WHERE   S.StudentID = '199899200'
+
 
 --6.	Select the CourseID, CourseNames, and the Semesters they have been taught in
 -- TODO: Student Answer Here...
