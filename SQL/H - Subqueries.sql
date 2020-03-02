@@ -143,7 +143,16 @@ FROM Student
 GROUP BY Student.StudentID
 HAVING AVG(Mark) >= ALL (SELECT AVG(Mark)
 						 FROM Registration
-						 GROUP BY Mark)
+						 GROUP BY StudentID)
+
+SELECT StudentID
+FROM Registration
+GROUP BY StudentID
+HAVING AVG(Mark) >= All				-- A number cant be 'GREATER THAN or EQUAL TO' a NULL value
+			(SELECT AVG(Mark)
+			 FROM Registration
+			 WHERE Mark IS NOT NULL -- Ah, tricky!
+			 GROUP BY StudentID)
 ----------------Not complete
 
 -- 11. Which course(s) allow the largest classes? Show the course id, name, and max class size.
