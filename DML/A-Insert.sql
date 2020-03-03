@@ -53,7 +53,7 @@ SELECT  PositionDescription
 FROM    Position
 WHERE   PositionID NOT IN (SELECT PositionID FROM Staff)
 --      Add Sheldon Murray as the new Assistant Dean.
--- TODO: Student Answer Here....
+-- (SQ) TODO: Student Answer Here....
 
 -- 3. There are three additional clubs being started at the school:
 --      - START - Small Tech And Research Teams
@@ -66,11 +66,27 @@ VALUES ('START', 'Small Tech And Research Teams'),
        ('RACE', 'Rapid Acronym Creation Experts')
 
 -- ======= Practice ========
--- 4. In your web browser, use https://randomuser.me/ to get information on three
+--(SQ) 4. In your web browser, use https://randomuser.me/ to get information on three
 --    people to add as new students. Write separate insert statement for each new student.
 -- TODO: Student Answer Here....
+INSERT INTO  Student(FirstName, LastName, Gender, StreetAddress, City, Birthdate)
+VALUES ('Yvonne', 'Hall', 'M', '1851 Wheeler Ridge Dr', 'London', '1981-04-05 00:00:00'),
+		('Arlene', 'Pierce', 'F', '1851 Wheeler Ridge Dr', 'Calgary', '1981-04-05 00:00:00'),
+		('Steve', 'Jackson', 'M', '1851 Wheeler Ridge Dr', 'Edmonton', '1947-07-07 00:00:00')
 
-
--- 5. Enroll each of the students you've added into the DMIT777 course.
+-- SELECT * FROM Student
+--(SQ) 5. Enroll each of the students you've added into the DMIT777 course.
 --    Use 'Dan Gilleland' as the instructor. At this point, their marks should be NULL.
 -- TODO: Student Answer Here....
+INSERT INTO Registration(StudentID, CourseId, StaffID)
+VALUES ('200978402', 'DMIT777', (SELECT StaffID FROM Staff WHERE FirstName  = 'Dan' AND LastName = 'Gilleland') ),
+		('200978403', 'DMIT777',(SELECT StaffID FROM Staff WHERE FirstName  = 'Dan' AND LastName = 'Gilleland') ),
+		('200978404', 'DMIT777', (SELECT StaffID FROM Staff WHERE FirstName  = 'Dan' AND LastName = 'Gilleland')),
+		('200978405', 'DMIT777', (SELECT StaffID FROM Staff WHERE FirstName  = 'Dan' AND LastName = 'Gilleland'))
+----------Not completed
+
+-- SELECT * FROM Registration
+SELECT StudentId FROM Registration
+WHERE StudentID = '200978402'
+
+SELECT * FROM Staff
