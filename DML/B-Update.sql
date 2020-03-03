@@ -45,13 +45,22 @@ SET    City = 'Edmonton'
 WHERE  City = 'Edm'
 
 -- ======= Practice ========
--- 5. For each student that does not have a mark in the Registration table,
+--(SQ) 5. For each student that does not have a mark in the Registration table,
 --    create an update statement that gives each student a different mark.
 -- TODO: Student Answer Here....
+UPDATE Registration
+SET		Mark = '80'
+WHERE Mark = '0'
 
--- 6. Choose a student from the previous question and withdraw them from all
+--(SQ) 6. Choose a student from the previous question and withdraw them from all
 --    their courses.
 -- TODO: Student Answer Here....
+UPDATE Registration
+SET WithdrawYN = 'Y'
+WHERE  Mark = '80'
+
+SELECT * FROM Registration
+-------Not completed because those command will execute to all students having mark = 80
 
 /* The following statements expect the presence of a view called StudentGrades.
 IF OBJECT_ID('StudentGrades', 'V') IS NOT NULL
