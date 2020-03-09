@@ -79,9 +79,12 @@ FROM   Payment
 GROUP BY PaymentTypeID
 
 
--- 8. How many students are there in each club? Show the clubID and the count
+-- (SQ) 8. How many students are there in each club? Show the clubID and the count
 -- TODO: Student Answer Here....
-
+SELECT A.ClubId, COUNT(A.StudentID) 'Members'
+FROM Activity A
+GROUP BY  A.ClubId
+ORDER BY 'Members'
 -- Check your answer by manually grouping students by their club membership and counting them
 SELECT  ClubId, StudentID
 FROM    Activity
@@ -94,10 +97,9 @@ GROUP BY A.ClubID
 HAVING COUNT(A.StudentID) >= 3
 
 --(SQ)10. Grouping the courses by the number of hours in each course, what is the average cost of those courses? Display the course hours and the average cost.
-SELECT	C.CourseHours, AVG(C.CourseCost)
-FROM Course AS C
+SELECT C.CourseHours, AVG(C.CourseCost)
+FROM Course C
 GROUP BY C.CourseHours
-ORDER BY C.CourseHours
 
 --(SQ)11. Which teachers are getting the best results from the courses they teach? Display the staff ID and the average course mark, sorted by the course mark from highest to lowest.
 SELECT R.StaffID, AVG(R.Mark)
@@ -106,18 +108,18 @@ GROUP BY R.StaffID
 ORDER BY AVG(R.Mark)	DESC
 
 --(SQ)12. How many male and female students do we have?
-SELECT Gender, COUNT(Gender)
-FROM Student
-GROUP BY Gender
+SELECT S.Gender, COUNT(S.Gender)
+FROM Student S
+GROUP BY S.Gender
 
 --(SQ)13. Show the average balance owing for male and female students.
-SELECT Gender, BalanceOwing
-FROM Student
-GROUP BY Gender
+SELECT S.Gender, AVG(S.BalanceOwing)
+FROM Student S
+GROUP BY S.Gender
 
 --(SQ)14. How many students participate in school clubs? Display the club id and the number of students. (Hint: You should be using the Activity table for this question.)
-SELECT ClubID, COUNT(StudentID) 'Number of Students'
-FROM Activity
-GROUP BY ClubID
+SELECT A.ClubId, COUNT(A.StudentID) 'Numbers of Students'
+FROM Activity A
+GROUP BY A.ClubId
 
 SELECT * FROM Student
