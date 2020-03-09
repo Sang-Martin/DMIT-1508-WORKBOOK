@@ -37,9 +37,9 @@ FROM    Staff S
         ON S.StaffID = R.StaffID
 ORDER BY 'Staff Full Name', CourseId
 
---3.	Select all the Club ID's and the Student full names that are in them
+-- (SQ) 3.	Select all the Club ID's and the Student full names that are in them
 -- TODO: Student Answer Here...
-SELECT  ClubId, FirstName + ' ' + LastName AS 'Student Full Name'
+SELECT  ClubId, FirstName + ' ' + LastName AS 'Full Name'
 FROM    Activity A
     INNER JOIN Student S ON A.StudentID = S.StudentID
 
@@ -50,7 +50,7 @@ SELECT  S.FirstName + ' ' + S.LastName AS 'Student Name',
 FROM    Registration R
     INNER JOIN Student S
             ON S.StudentID = R.StudentID
-WHERE   S.StudentID = 199899200
+WHERE   S.StudentID = '199899200'
 
 
 --5.	Select the Student full name, course names and marks for studentID 199899200.
@@ -64,13 +64,14 @@ FROM    Student S
 WHERE   S.StudentID = '199899200'
 
 
---6.	Select the CourseID, CourseNames, and the Semesters they have been taught in
+-- (SQ) 6.	Select the CourseID, CourseNames, and the Semesters they have been taught in
 -- TODO: Student Answer Here...
-SELECT  C.CourseId, C.CourseName, R.Semester
-FROM    Course C
-    INNER JOIN Registration R ON C.CourseId = R.CourseId
+SELECT C.CourseId, C.CourseName, R.Semester
+FROM Course C
+	INNER JOIN Registration R
+	ON C.CourseId = R.CourseId
 
---7.	What Staff Full Names have taught Networking 1?
+-- (SQ) 7.	What Staff Full Names have taught Networking 1?
 -- TODO: Student Answer Here...
 SELECT  FirstName + ' ' + LastName AS 'Staff Name'
 FROM    Staff S
@@ -91,9 +92,19 @@ FROM    Student S
 WHERE   S.StudentID = 199912010
   AND   R.Semester = '2001S'
 
---9. What are the Student Names, courseID's with individual Marks at 80% or higher? Sort the results by course.
+-- (SQ) 9. What are the Student Names, courseID's with individual Marks at 80% or higher? Sort the results by course.
 -- TODO: Student Answer Here...
+SELECT FirstName + ' ' + LastName AS 'Student Names', R.CourseId, R.Mark
+FROM Student S
+	INNER JOIN Registration R	ON	S.StudentID = R.StudentID
+WHERE R.Mark >= 80
+ORDER BY CourseId
 
---10. Modify the script from the previous question to show the Course Name along with the ID.
+-- (SQ) 10. Modify the script from the previous question to show the Course Name along with the ID.
 -- TODO: Student Answer Here...
-
+SELECT FirstName + ' ' + LastName AS 'Student Names', R.CourseId, C.CourseName, R.Mark
+FROM Student S
+	INNER JOIN Registration R	ON	S.StudentID = R.StudentID
+	INNER JOIN Course C			ON R.CourseId = C.CourseId
+WHERE R.Mark >= 80
+ORDER BY CourseId
