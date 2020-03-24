@@ -2,11 +2,17 @@
 
 -- Declare a variable
 DECLARE @Cost money
+SELECT @Cost
+
 -- Set a value for the variable using a value from the database
 -- Note that the whole SELECT statement is in parenthesis
 SET @Cost = (SELECT CourseCost FROM Course WHERE CourseId = 'DMIT101')
-PRINT @Cost
+PRINT @Cost = (SELECT CourseCost FROM Course WHERE CourseId = 'DMIT101')
 
+
+-- Set a value for the variable within a select statement
+SELECT @Cost = CourseCost FROM Course WHERE CourseId = 'DMIT101'
+SELECT @Cost
 
 -- Understanding BEGIN/END blocks
 --  A BEGIN/END block basically acts like a pair of curly braces in C#.
