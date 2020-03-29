@@ -34,13 +34,14 @@ GO
 
 -- Execute (run/call) the stored procedure as follows:
 EXEC GetName
-
+GO
 
 
 --1. Create a stored procedure called "HonorCourses" to select all the course names that have averages > 80%.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'HonorCourses')
-    DROP PROCEDURE HonorCourses
+    DROP PROCEDURE HonorCourses 
 GO
+
 CREATE PROCEDURE HonorCourses
     -- Parameters here
 AS
@@ -52,16 +53,20 @@ AS
     HAVING AVG(R.Mark) > 80
 RETURN
 GO
--- To actually execute (run) the stored procedure, you call EXEC
+-- To actually execute (run) the stored procedure, you call EXEC or EXECUTE
 EXEC HonorCourses
+GO
 
 
 --2. Create a stored procedure called "HonorCoursesOneTerm" to select all the course names that have average > 80% in semester 2004J.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'HonorCoursesOneTerm')
-    DROP PROCEDURE HonorCoursesOneTerm
+    DROP PROCEDURE HonorCoursesOneTerm -- DROP PROCEDURE if it exists
 GO
+
 CREATE PROCEDURE HonorCoursesOneTerm
+	-- Parameters here
 AS
+	-- Body of procedure here
     SELECT C.CourseName
     FROM   Course C
         INNER JOIN Registration R ON C.CourseId = R.CourseId
@@ -70,8 +75,12 @@ AS
     HAVING AVG(R.Mark) > 80
 RETURN
 GO
+
+-- To actually execute (run) the stored procedure, you call EXEC or EXECUTE
 EXEC HonorCoursesOneTerm
 GO
+
+
 --3. Oops, made a mistake! For question 2, it should have been for semester 2004S. Write the code to change the procedure accordingly. 
 ALTER PROCEDURE HonorCoursesOneTerm
 AS
@@ -97,8 +106,10 @@ AS
 RETURN
 GO
 -- Now the stored procedure can be called with any semester I want
-EXEC HonorCoursesOneTerm '2004S'
-EXEC HonorCoursesOneTerm '2004J'
+EXEC HonorCoursesOneTerm '2004S' 
+GO
+EXEC HonorCoursesOneTerm '2004J' 
+GO
 
 --4.  Create a stored procedure called CourseCalendar that lists the course ID, name, and cost of all available courses.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'CourseCalendar')
@@ -114,8 +125,8 @@ RETURN
 GO
 
 -- Call the stored procedure...
-EXEC CourseCalendar
-
+EXEC CourseCalendar 
+GO
 
 
 --4.B. Create a stored procedure called "NotInCourse" that lists the full names of the students that are not in a particular course. The stored procedure should expect the course number as a parameter. e.g.: DMIT221.
@@ -131,10 +142,12 @@ AS
     FROM    Student S
         INNER JOIN Registration R ON S.StudentID = R.StudentID
     WHERE   R.CourseId <> @CourseNumber -- <> is the "not equal to" operator
+--	WHERE Registration.CourseId  NOT IN (@CourseNumber)
 RETURN
 GO
 -- Try it out.....
 EXEC NotInCourse 'DMIT221'
+GO
 
 
 --5. Create a stored procedure called "LowNumbers" to select the course name of the course(s) that have had the lowest number of students in it.
