@@ -35,7 +35,6 @@ AS
 RETURN
 GO
 
-
 -- 1.b. Modify the AddClub procedure to ensure that the club name and id are actually supplied. Use the RAISERROR() function to report that this data is required.
 ALTER PROCEDURE AddClub
     -- Parameters here
@@ -55,6 +54,7 @@ AS
 RETURN
 GO
 
+
 -- 2. Make a stored procedure that will find a club based on the first two or more characters of the club's ID. Call the procedure "FindStudentClubs"
 -- The following stored procedure does the query, but without validation
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'FindStudentClubs')
@@ -73,6 +73,8 @@ GO
 EXEC FindStudentClubs NULL  -- What do you predict the result will be?
 EXEC FindStudentClubs ''    -- What do you predict the result will be?
 GO
+
+
 ALTER PROCEDURE FindStudentClubs
     @PartialID      varchar(10)
 AS
@@ -89,6 +91,8 @@ RETURN
 GO
 EXEC FindStudentClubs ''    -- What do you predict the result will be?
 GO
+
+
 -- The above change did not stop the select.
 -- To fix it, we need the ELSE side of the IF validation
 ALTER PROCEDURE FindStudentClubs -- Third time's the charm ;)
@@ -108,8 +112,10 @@ AS
     END
 RETURN
 GO
+
 EXEC FindStudentClubs ''    -- What do you predict the result will be?
 EXEC FindStudentClubs 'NA'  -- Should give good results with no errors.
+GO
 
 
 -- 3. Create a stored procedure that will change the mailing address for a student. Call it ChangeMailingAddress.
@@ -118,6 +124,7 @@ EXEC FindStudentClubs 'NA'  -- Should give good results with no errors.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'ChangeMailingAddress')
     DROP PROCEDURE ChangeMailingAddress
 GO
+
 CREATE PROCEDURE ChangeMailingAddress
     -- Parameters here
     @StudentId  int,
@@ -142,6 +149,7 @@ AS
         WHERE   StudentId = @StudentId 
     END   -- ...B }
 RETURN
+GO
 
 -- 4. Create a stored procedure that allows us to make corrections to a student's name. It should take in the student ID and the corrected name (first/last) of the student. Call the stored procedure CorrectStudentName. Validate that the student exists before attempting to change the name.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'CorrectStudentName')
@@ -162,6 +170,11 @@ AS
                 LastName = @LastName
         WHERE   StudentID = @StudentId
 RETURN
+GO
+
+
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'CorrectStudentName')
+    DROP PROCEDURE CorrectStudentName
 GO
 
 
