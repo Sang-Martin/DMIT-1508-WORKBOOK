@@ -14,6 +14,7 @@ WHERE   Mark BETWEEN 70 AND 80 -- BETWEEN is inclusive
 --      one for the upper value and one for the lower value.
 --      Call the stored procedure ListStudentMarksByRange
 GO
+
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'ListStudentMarksByRange')
     DROP PROCEDURE ListStudentMarksByRange
 GO
@@ -26,6 +27,7 @@ AS
     WHERE   Mark BETWEEN @lower AND @upper -- BETWEEN is inclusive
 RETURN
 GO
+
 
 -- Testing
 --  Good inputs
@@ -40,6 +42,8 @@ EXEC ListStudentMarksByRange 70, 101 -- Specifically checking the upper limit
 
 --  Alter the stored procedure to handle validation of inputs
 GO
+
+
 ALTER PROCEDURE ListStudentMarksByRange
     @lower  decimal,
     @upper  decimal
