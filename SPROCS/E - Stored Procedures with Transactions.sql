@@ -105,6 +105,31 @@ EXEC TransferCourse 199899200, '2004J', 'DMIT101', 'DMIT101'	--Non-existing Cour
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'AdjustMarks')
     DROP PROCEDURE AdjustMarks
 GO
+
+CREATE PROCEDURE AdjustMarks
+	@CourseId char(7)
+AS
+	IF @CourseId IS NULL
+	BEGIN
+		RAISERROR('CourseID cannot be null', 16, 1)
+	END
+	ELSE
+	BEGIN
+		BEGIN TRANSACTION
+		PRINT ('Step 1 - Update Registration...')
+		UPDATE Registration
+			SET Mark = 100
+			WHERE CourseId = @CourseId
+				AND Mark *1.1 > 100
+		IF @@ERROR > 0
+		BEGIN
+			PRINT('RAISEROR + ROLLBACK')
+			RAISERROR('Problem updating marks',16,1)
+			ROLLBACK TRANSACTION
+		END
+		ELSE
+	END
+
 CREATE PROCEDURE AdjustMarks
     -- Parameters here
     @CourseID   char(7)
