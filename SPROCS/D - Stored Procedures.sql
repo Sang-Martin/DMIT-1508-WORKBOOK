@@ -127,12 +127,15 @@ AS
 RETURN
 GO
 
+
 -- Test the above sproc
 EXEC LookupClubMembers 'CHESS'
 EXEC LookupClubMembers 'CSS'
 EXEC LookupClubMembers 'Drop Out'
 EXEC LookupClubMembers 'NASA1'
 EXEC LookupClubMembers NULL
+GO
+
 
 -- 3) Create a stored procedure called RemoveClubMembership that takes a club ID and deletes all the members of that club. Be sure that the club exists. Also, raise an error if there were no members deleted from the club.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'RemoveClubMembership')
