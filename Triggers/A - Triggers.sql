@@ -3,6 +3,24 @@ USE [A01-School]
 GO
 
 /*
+If you recall about Transactions, they are used whenever we have 2 or more of an INSERT / UPADATE / DELETE.
+A transaction
+
+These temporary tables have the same columns that the table being affected has. These tables ahve special names:
+_ DELETED
+_ INSERTED
+
+Triggers are our opportunity to interecept the internal transaction that SQL server does for each INSERT / UPDATE / DELETE.
+Triggers are 
+
+
+Trigger are used for:
+- Perfoming complex validations that cannot be done with ordinary CHECK constraints or other constraints. For example, I might need to compare something in this table with some other set of information from multiple tables, or against some aggregates.
+ 
+
+*/
+
+/*
 IF EXISTS (SELECT * FROM sys.triggers WHERE object_id = OBJECT_ID(N'[dbo].[Table_TriggerType]'))
     DROP TRIGGER Table_TriggerType
 GO
@@ -15,13 +33,16 @@ AS
 RETURN
 GO
 */
+
+
 -- Making a diagnostic trigger for the first example
 IF EXISTS (SELECT * FROM sys.triggers WHERE object_id = OBJECT_ID(N'[dbo].[Activity_DML_Diagnostic]'))
     DROP TRIGGER Activity_DML_Diagnostic
 GO
 
 CREATE TRIGGER Activity_DML_Diagnostic
-ON Activity
+ON Activity -- This trigger is "attached" to the Activity table.
+-- This trigger will be called anytime there is an INSERT / UPDATE / DELETE
 FOR Insert, Update, Delete -- Choose only the DML statement(s) that apply
 AS
     -- Body of Trigger
@@ -32,7 +53,7 @@ RETURN
 GO
 -- Demonstrate the diagnostic trigger
 SELECT * FROM Activity
-INSERT INTO Activity(StudentID, ClubId) VALUES (200494476, 'CIPS')
+INSERT INTO Activity(StudentID, ClubId) VALUES (200494476, 'CIPS') -- Our trigger will be called
 -- (note: generally, it's not a good idea to change a primary key, even part of one)
 UPDATE Activity SET ClubId = 'NASA1' WHERE StudentID = 200494476
 DELETE FROM Activity WHERE StudentID = 200494476
@@ -72,6 +93,12 @@ VALUES (200495500, 'CIPS') -- Robert Smith
 INSERT INTO Activity(StudentID, ClubId)
 VALUES (200312345, 'CIPS') -- Mary Jane
 
+-- Try with an INSERT statement that is trying to do a whole bunch of rows at one time.
+-- First, let's check the counts
+
+SELECT StudentID, COUNT(StudentID) FROM Activity WHERE StudentID IN (200122100, 200494476, 200522220, 200978400, 200688700, 200495500) GROUP BY StudentID
+
+
 INSERT INTO Activity(StudentID, ClubId)
 VALUES (200122100, 'CIPS'), -- Peter Codd   -- New to the Activity table
        (200494476, 'CIPS'), -- Joe Cool     -- New to the Activity table
@@ -81,13 +108,17 @@ VALUES (200122100, 'CIPS'), -- Peter Codd   -- New to the Activity table
       ,(200495500, 'CIPS')  -- Robert Smith -- This would be his 4th club!
 
 -- 2. The Education Board is concerned with rising course costs! Create a trigger to ensure that a course cost does not get increased by more than 20% at any one time.
+
+-- How can we tell if a course's cost is being increased by more than 20%? We have to do a comparison between the "before" cost and the "after" cost. We can only do this check in a trigger, if we want the opportunity to do a ROLLBACK.
+-- the "before" cost is reflected in the deleted table, the "after" cost is reflected in the inserted table
+
 IF EXISTS (SELECT * FROM sys.triggers WHERE object_id = OBJECT_ID(N'[dbo].[Course_Update_CourseCostLimit]'))
     DROP TRIGGER Course_Update_CourseCostLimit
 GO
 
 CREATE TRIGGER Course_Update_CourseCostLimit
-ON Course
-FOR Update -- Choose only the DML statement(s) that apply
+ON Course -- the inserted and deleted tables will have the same "schema" (colmun) as the Course table
+FOR Update -- Choose only the DML statement(s), because that's the only time that we have a before/after version of the data
 AS
     -- Body of Trigger
     IF @@ROWCOUNT > 0 AND
@@ -102,8 +133,8 @@ GO
 -- TODO: Write the code that will test this stored procedure.
 SELECT * FROM Course
 UPDATE Course SET CourseCost = 1000 -- This should fail
-UPDATE Course SET CourseCost = CourseCost * 1.21
-UPDATE Course SET CourseCost = CourseCost * 1.195
+UPDATE Course SET CourseCost = CourseCost * 1.21 -- An increase of 21%
+UPDATE Course SET CourseCost = CourseCost * 1.195 -- Try an increase of 19.5%
 
 -- 3. Too many students owe us money and keep registering for more courses! Create a trigger to ensure that a student cannot register for any more courses if they have a balance owing of more than $500.
 IF EXISTS (SELECT * FROM sys.triggers WHERE object_id = OBJECT_ID(N'[dbo].[Registration_Insert_BalanceOwing]'))
@@ -128,7 +159,8 @@ GO
 SELECT * FROM Student WHERE BalanceOwing > 0
 
 -- Write a stored procedure called RegisterStudent that puts a student in a course and increases the balance owing by the cost of the course.
-
+-- After creating this stored procedure, do some tests of the stored procedure. Remember to have the trigger in place (on the Registration table) before your test your stored procedure.
+-- TODO: Student answer here
 
 --4. Our school DBA has suddenly disabled some Foreign Key constraints to deal with performance issues! Create a trigger on the Registration table to ensure that only valid CourseIDs, StudentIDs and StaffIDs are used for grade records. (You can use sp_help tablename to find the name of the foreign key constraints you need to disable to test your trigger.) Have the trigger raise an error for each foreign key that is not valid. If you have trouble with this question create the trigger so it just checks for a valid student ID.
 -- sp_help Registration -- then disable the foreign key constraints....
