@@ -248,7 +248,7 @@ ON Student
 FOR Update -- Choose only the DML statement(s) that apply
 AS
 	-- Body of Trigger
-    IF @@ROWCOUNT > 0 AND UPDATE(BalanceOwing)
+    IF @@ROWCOUNT > 0 AND UPDATE(BalanceOwing) -- There are the only two conditions we're concerned about for logging.
 	BEGIN
 	    INSERT INTO BalanceOwingLog (StudentID, ChangedateTime, OldBalance, NewBalance)
 	    SELECT I.StudentID, GETDATE(), D.BalanceOwing, I.BalanceOwing
