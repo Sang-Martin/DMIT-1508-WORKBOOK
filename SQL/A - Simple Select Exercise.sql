@@ -138,7 +138,8 @@ WHERE   R.Mark BETWEEN 70 AND 80
 --8.a. Select the studentIDs, CourseID and mark where the Mark is 80 and 85
 SELECT  R.StudentID, R.CourseId, R.Mark
 FROM    Registration R
-WHERE   R.Mark = 80 OR R.Mark = 85
+WHERE Mark IN (80, 85) -- (80 OR 85)
+
 
 -- The next two questions introduce the idea of "wildcards" and pattern matching in the WHERE clause
 -- _ is a wildcard for a single character
@@ -164,6 +165,7 @@ WHERE	CourseName LIKE '%programming%'
 SELECT ClubName
 FROM	Club
 WHERE	ClubName LIKE 'N%' OR ClubName LIKE 'C%'
+
 
 --(SQ) 13. Select Student Names, Street Address and City where the lastName is only 3 letters long.
 SELECT	S.FirstName + S.LastName AS 'Student Names', S.StreetAddress AS 'Street Address', s.City
