@@ -14,7 +14,6 @@ WHERE   Mark BETWEEN 70 AND 80 -- BETWEEN is inclusive
 --      one for the upper value and one for the lower value.
 --      Call the stored procedure ListStudentMarksByRange
 GO
-
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'ListStudentMarksByRange')
     DROP PROCEDURE ListStudentMarksByRange
 GO
@@ -27,7 +26,6 @@ AS
     WHERE   Mark BETWEEN @lower AND @upper -- BETWEEN is inclusive
 RETURN
 GO
-
 
 -- Testing
 --  Good inputs
@@ -42,8 +40,6 @@ EXEC ListStudentMarksByRange 70, 101 -- Specifically checking the upper limit
 
 --  Alter the stored procedure to handle validation of inputs
 GO
-
-
 ALTER PROCEDURE ListStudentMarksByRange
     @lower  decimal,
     @upper  decimal
@@ -66,6 +62,16 @@ GO
 /* ----------------------------------------------------- */
 
 -- 2.   Selects the Staff full names and the Course ID's they teach.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'SprocName')
+    DROP PROCEDURE SprocName
+GO
+CREATE PROCEDURE SprocName
+    -- Parameters here
+AS
+    -- Body of procedure here
+RETURN
+GO
+
 SELECT  DISTINCT -- The DISTINCT keyword will remove duplate rows from the results
         FirstName + ' ' + LastName AS 'Staff Full Name',
         CourseId
@@ -79,6 +85,15 @@ ORDER BY 'Staff Full Name', CourseId
 /* ----------------------------------------------------- */
 
 -- 3.   Selects the students first and last names who have last names starting with S.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'SprocName')
+    DROP PROCEDURE SprocName
+GO
+CREATE PROCEDURE SprocName
+    -- Parameters here
+AS
+    -- Body of procedure here
+RETURN
+GO
 SELECT  FirstName, LastName
 FROM    Student
 WHERE   LastName LIKE 'S%'
@@ -91,6 +106,15 @@ WHERE   LastName LIKE 'S%'
 /* ----------------------------------------------------- */
 
 -- 4.   Selects the CourseID's and Coursenames where the CourseName contains the word 'programming'.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'SprocName')
+    DROP PROCEDURE SprocName
+GO
+CREATE PROCEDURE SprocName
+    -- Parameters here
+AS
+    -- Body of procedure here
+RETURN
+GO
 SELECT  CourseId, CourseName
 FROM    Course
 WHERE   CourseName LIKE '%programming%'
@@ -102,6 +126,15 @@ WHERE   CourseName LIKE '%programming%'
 /* ----------------------------------------------------- */
 
 -- 5.   Selects the Payment Type Description(s) that have the highest number of Payments made.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'SprocName')
+    DROP PROCEDURE SprocName
+GO
+CREATE PROCEDURE SprocName
+    -- Parameters here
+AS
+    -- Body of procedure here
+RETURN
+GO
 SELECT PaymentTypeDescription
 FROM   Payment 
     INNER JOIN PaymentType 
@@ -115,6 +148,15 @@ HAVING COUNT(PaymentType.PaymentTypeID) >= ALL (SELECT COUNT(PaymentTypeID)
 /* ----------------------------------------------------- */
 
 -- 6.   Selects the current staff members that are in a particular job position.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'SprocName')
+    DROP PROCEDURE SprocName
+GO
+CREATE PROCEDURE SprocName
+    -- Parameters here
+AS
+    -- Body of procedure here
+RETURN
+GO
 SELECT  FirstName + ' ' + LastName AS 'StaffFullName'
 FROM    Position P
     INNER JOIN Staff S ON S.PositionID = P.PositionID
@@ -125,6 +167,15 @@ WHERE   DateReleased IS NULL
 /* ----------------------------------------------------- */
 
 -- 7.   Selects the staff members that have taught a particular course (e.g.: 'DMIT101').
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'SprocName')
+    DROP PROCEDURE SprocName
+GO
+CREATE PROCEDURE SprocName
+    -- Parameters here
+AS
+    -- Body of procedure here
+RETURN
+GO
 SELECT  DISTINCT FirstName + ' ' + LastName AS 'StaffFullName',
         CourseId
 FROM    Registration R
