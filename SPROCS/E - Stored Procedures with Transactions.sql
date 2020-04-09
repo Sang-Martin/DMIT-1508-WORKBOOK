@@ -1,16 +1,16 @@
 --  Stored Procedures (Sprocs)
 -- Demonstrate using Transactions in a Stored Procedure
 
--- What is transaction?
--- A transaction is typically needed when we do two or more of an Insert/Update/Delete.
--- A transaction must succeed or fail as a group
+-- What is a Transaction?
+--  A transaction is typically needed when we do two or more of an Insert/Update/Delete.
+--  A transaction must succeed or fail as a group.
 -- How do we start a Transaction?
--- BEGIN TRANSACTION
---		the BEGIN TRANSACTION only needs to be stated once
+--  BEGIN TRANSACTION
+--      the BEGIN TRANSACTION only needs to be stated once
 -- To make a transaction succeed, we use the statement COMMIT TRANSACTION
---		the COMMIT TRANSACTION should only be used one
--- To make a transaction fail, we use the statemen ROLLBACK TRANSACTION
---		we will have one ROLLBACK TRANSACTION for every Insert/Update/Delete
+--      the COMMIT TRANSACTION should only be used once
+-- To make a transaction fail, we use the statement ROLLBACK TRANSACTION
+--      We will have one ROLLBACK TRANSACTION for every Insert/Update/Delete in our stored procedure
 
 USE [A01-School]
 GO
@@ -29,8 +29,8 @@ GO
 
 
 -- 1. Add a stored procedure called TransferCourse that accepts a student ID, semester, and two course IDs: the one to move the student out of and the one to move the student in to.
---	- Withdraw the student from one course UPDATE
---	- Add the student to the other course  INSERT
+--      - Withdraw the student from one course  UPDATE
+--      - Add the student to the other course   INSERT
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'TransferCourse')
     DROP PROCEDURE TransferCourse
 GO
@@ -47,6 +47,7 @@ AS
     BEGIN
         RAISERROR('All parameters are required (cannot be null)', 16, 1)
     END
+    -- We may be asked to do other validation
     ELSE
     BEGIN
         -- Begin Transaction
@@ -58,7 +59,7 @@ AS
         WHERE  StudentID = @StudentID
           AND  CourseId = @LeaveCourseID
           AND  Semester = @Semester
-          AND  (WithdrawYN = 'N' OR WithdrawYN IS NULL)
+          AND  (WithdrawYN = 'N' OR WithdrawYN IS NULL) -- this could result in 0 rows affected
         --         Check for error/rowcount
         IF @@ERROR > 0 OR @@ROWCOUNT = 0
         BEGIN
@@ -92,44 +93,19 @@ RETURN
 GO
 
 -- Test my stored procedure
--- sp-help TransferCourse
+-- sp_help TransferCourse
 -- SELECT * FROM Registration
 -- SELECT * FROM Course
 EXEC TransferCourse 199899200, '2004J', 'DMIT152', 'DMIT101'
 -- Testing with "bad" data
-EXEC TransferCourse 5, '2004J', 'DMIT152', 'DMIT101'			--Bad StudentID
-EXEC TransferCourse 199899200, '2004J', 'DMIT152', 'DMIT101'	--Bad Semester
-EXEC TransferCourse 199899200, '2004J', 'DMIT101', 'DMIT101'	--Non-existing Course to enter
+EXEC TransferCourse 5, '2004J', 'DMIT152', 'DMIT101'            -- Bad StudentID
+EXEC TransferCourse 199899200, '2020J', 'DMIT152', 'DMIT101'    -- Bad Semester
+EXEC TransferCourse 199899200, '2004J', 'DMIT101', 'DMIT999'    -- Non-existing Course to enter
 
 -- 2. Add a stored procedure called AdjustMarks that takes in a course ID. The procedure should adjust the marks of all students for that course by increasing the mark by 10%. Be sure that nobody gets a mark over 100%.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'AdjustMarks')
     DROP PROCEDURE AdjustMarks
 GO
-
-CREATE PROCEDURE AdjustMarks
-	@CourseId char(7)
-AS
-	IF @CourseId IS NULL
-	BEGIN
-		RAISERROR('CourseID cannot be null', 16, 1)
-	END
-	ELSE
-	BEGIN
-		BEGIN TRANSACTION
-		PRINT ('Step 1 - Update Registration...')
-		UPDATE Registration
-			SET Mark = 100
-			WHERE CourseId = @CourseId
-				AND Mark *1.1 > 100
-		IF @@ERROR > 0
-		BEGIN
-			PRINT('RAISEROR + ROLLBACK')
-			RAISERROR('Problem updating marks',16,1)
-			ROLLBACK TRANSACTION
-		END
-		ELSE
-	END
-
 CREATE PROCEDURE AdjustMarks
     -- Parameters here
     @CourseID   char(7)
@@ -203,16 +179,17 @@ AS
         DECLARE @CourseCost     money
         -- Assign a value to each of the local variables
         SELECT @MaxStudents = MaxStudents FROM Course WHERE CourseId = @CourseID
+        -- SET @MaxStudent = (SELECT MaxStudent FROM Course WHERE CourseId = @CourseID)
         SELECT @CurrentCount = COUNT (StudentID) FROM Registration WHERE CourseId = @CourseID AND Semester = @Semester
         SELECT @CourseCost = CourseCost FROM Course WHERE CourseId = @CourseID
 
-        IF @MaxStudents >= @currentcount 
+        IF @MaxStudents <= @currentcount 
         BEGIN
             RAISERROR('The course is already full', 16, 1)
         END
         ELSE
         BEGIN
-            BEGIN TRANSACTION
+            BEGIN TRANSACTION -- Changes will be temporary and can be rolled back
 
             INSERT INTO Registration (StudentID, CourseId, Semester)
             VALUES (@StudentID, @CourseID, @Semester)
@@ -243,6 +220,20 @@ AS
 RETURN
 
 GO
+-- Test RegisterStudent
+-- SELECT * FROM Registration WHERE Semester = '2004J' AND CourseID = 'DMIT152'
+-- SELECT * FROM Student
+-- SELECT * FROM Course WHERE CourseID = 'DMIT152'
+------------200322620--200494470--200494476--200495500--200522220--200578400--200645320
+-- We already have one student in this class/semester, let's add 4 more
+EXEC RegisterStudent 199912010, 'DMIT152', '2004J'
+EXEC RegisterStudent 199966250, 'DMIT152', '2004J'
+EXEC RegisterStudent 200011730, 'DMIT152', '2004J'
+EXEC RegisterStudent 200122100, 'DMIT152', '2004J'
+-- There is a maximum of 5 student in this course, so the following should produce an error
+-- and not actually add the student
+EXEC RegisterStudent 200312345, 'DMIT152', '2004J'
+
 
 -- 4. Add a stored procedure called WitnessProtection that erases all existence of a student from the database. The stored procedure takes the StudentID, first and last names, gender, and birthdate as parameters. Ensure that the student exists in the database before removing them (all the parameter values must match).
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'WitnessProtection')
@@ -283,7 +274,7 @@ AS
             END
             ELSE
             BEGIN
-                DELETE Payment
+                DELETE FROM Payment
                 WHERE  StudentID = @StudentID 
                 IF @@ERROR <> 0
                 BEGIN
@@ -375,7 +366,7 @@ CREATE PROCEDURE WithdrawStudent
     @Semester   char(5)
 AS
     -- Declare a bunch of local/temp variables
-    DECLARE @coursecost     decimal (6,2)
+    DECLARE @coursecost     decimal (6,2) -- basically equivalent to the money data type
     DECLARE @amount         decimal(6,2)
     DECLARE @balanceowing   decimal(6,2)
     DECLARE @difference     decimal(6,2)
@@ -392,7 +383,7 @@ AS
                          AND    CourseId = @CourseID
                          AND    Semester = @Semester)
         BEGIN
-          RAISERROR('that student does not exist in that registration', 16, 1)
+          RAISERROR('That student does not exist in that registration', 16, 1)
         END
         ELSE
         BEGIN
@@ -421,7 +412,7 @@ AS
 
                 SELECT  @difference = @balanceowing - @coursecost / 2
         
-                IF @difference >0
+                IF @difference > 0
                     SET @amount = @difference
                 ELSE
                     SET @amount = 0
@@ -450,7 +441,7 @@ GO
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_NAME = 'ArchiveGrade')
     DROP TABLE ArchiveGrade
 
-CREATE TABLE ArchiveGrade
+CREATE TABLE ArchiveGrade -- Fairly simple - no PKs, no FKs, no CHECK
 (
     StudentID        int,
     CourseId        char (7),
