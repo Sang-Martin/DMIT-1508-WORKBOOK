@@ -84,6 +84,7 @@ GO
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'FindStudentClubs')
     DROP PROCEDURE FindStudentClubs
 GO
+
 CREATE PROCEDURE FindStudentClubs
     @PartialID      varchar(10)
 AS
@@ -97,6 +98,7 @@ GO
 EXEC FindStudentClubs NULL  -- What do you predict the result will be?
 EXEC FindStudentClubs ''    -- What do you predict the result will be?
 GO
+
 ALTER PROCEDURE FindStudentClubs
     @PartialID      varchar(10)
 AS
@@ -142,6 +144,7 @@ EXEC FindStudentClubs 'NA'  -- Should give good results with no errors.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'ChangeMailingAddress')
     DROP PROCEDURE ChangeMailingAddress
 GO
+
 CREATE PROCEDURE ChangeMailingAddress
     -- Parameters here
     @StudentId  int,
@@ -171,6 +174,7 @@ GO
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'CorrectStudentName')
     DROP PROCEDURE CorrectStudentName
 GO
+
 CREATE PROCEDURE CorrectStudentName
     @StudentId      int,
     @FirstName      varchar(25),
@@ -196,6 +200,7 @@ GO
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'RemoveFromClub')
     DROP PROCEDURE RemoveFromClub
 GO
+
 CREATE PROCEDURE RemoveFromClub
     @StudentId      int
 AS
@@ -214,6 +219,7 @@ GO
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'ListStaff')
     DROP PROCEDURE ListStaff
 GO
+
 CREATE PROCEDURE ListStaff
 AS
     SELECT  FirstName + '  ' + LastName AS 'StaffMember', PositionDescription
@@ -227,6 +233,7 @@ GO
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'GetStudentMarks')
     DROP PROCEDURE GetStudentMarks
 GO
+
 CREATE PROCEDURE GetStudentMarks
     @StudentId      int
 AS
@@ -245,6 +252,7 @@ GO
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'SprocName')
     DROP PROCEDURE SprocName
 GO
+
 CREATE PROCEDURE SprocName
     @CourseNumber   char(7),
     @Semester       char(5)
