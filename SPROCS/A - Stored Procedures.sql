@@ -115,6 +115,7 @@ GO
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'CourseCalendar')
     DROP PROCEDURE CourseCalendar
 GO
+
 CREATE PROCEDURE CourseCalendar
     -- Parameters here
 AS
@@ -133,6 +134,7 @@ GO
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'NotInCourse')
     DROP PROCEDURE NotInCourse
 GO
+-- sp_help Course
 CREATE PROCEDURE NotInCourse
     -- Parameters here
     @CourseNumber   char(7)
@@ -141,7 +143,7 @@ AS
     SELECT  DISTINCT FirstName + ' ' + LastName AS 'Student Name'        
     FROM    Student S
         INNER JOIN Registration R ON S.StudentID = R.StudentID
-    WHERE   R.CourseId <> @CourseNumber -- <> is the "not equal to" operator
+    WHERE   R.CourseId <> @CourseNumber -- <> or != is the "not equal to" operator
 --	WHERE Registration.CourseId  NOT IN (@CourseNumber)
 RETURN
 GO
@@ -150,15 +152,18 @@ EXEC NotInCourse 'DMIT221'
 GO
 
 
---5. Create a stored procedure called "LowNumbers" to select the course name of the course(s) that have had the lowest number of students in it.
+--(Good exercise) 5. Create a stored procedure called "LowNumbers" to select the course name of the course(s) that have had the lowest number of students in it.
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'LowNumbers')
     DROP PROCEDURE LowNumbers
 GO
+/*    EXPERIENCE   */
+-- *** should use LEFT OUTER JOIN to display all data including NULL
+-- *** should display COUNT() as well to check it
 CREATE PROCEDURE LowNumbers
     -- Parameters here
 AS
     -- Body of procedure here
-    SELECT  C.CourseName
+    SELECT  C.CourseName, COUNT(R.CourseId)
 --           ,COUNT(R.StudentID) AS 'Enrollement Count'
     FROM    Course C
         LEFT OUTER JOIN Registration R ON C.CourseId = R.CourseId
@@ -178,14 +183,58 @@ RETURN
 GO
 -- Run the above with the database as-is, and you will see five courses coming back.
 EXEC LowNumbers
+GO
+
 INSERT INTO Course(CourseId, CourseName, CourseHours, CourseCost, MaxStudents)
 VALUES ('DMIT987', 'Advanced Logic', 90, 420.00, 12)
 
---6. Create a stored procedure called "Provinces" to list all the students provinces.
+--(SQ)6. Create a stored procedure called "Provinces" to list all the students provinces.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'LowNumbers')
+    DROP PROCEDURE Provinces
+GO
+
+CREATE PROCEDURE Provinces
+AS
+	SELECT DISTINCT Province
+	FROM Student
+RETURN
+GO
+
+EXEC Provinces
+GO
 
 --7. OK, question 6 was ridiculously simple and serves no purpose. Lets remove that stored procedure from the database.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'LowNumbers')
+    DROP PROCEDURE Provinces
+GO
 
 --8. Create a stored procedure called StudentPaymentTypes that lists all the student names and their payment types. Ensure all the student names are listed, including those who have not yet made a payment.
+IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'LowNumbers')
+    DROP PROCEDURE StudentPaymentTypes
+GO
+
+CREATE PROCEDURE StudentPaymentTypes
+AS
+	SELECT DISTINCT S.FirstName + ' ' + S.LastName 'Student Names'--, PT.PaymentTypeDescription
+	FROM Student S
+		LEFT OUTER JOIN Payment P ON S.StudentID = P.StudentID
+		--LEFT OUTER JOIN PaymentType PT ON P.PaymentTypeID = PT.PaymentTypeID		
+RETURN
+GO
+ -- need to check SQL again
+EXEC StudentPaymentTypes
+GO
 
 --9. Modify the procedure from question 8 to return only the student names that have made payments.
 
+ALTER PROCEDURE StudentPaymentTypes
+AS
+	SELECT DISTINCT S.FirstName + ' ' + S.LastName 'Student Names'--, PT.PaymentTypeDescription
+	FROM Student S
+		INNER JOIN Payment P ON S.StudentID = P.StudentID
+		--INNER JOIN PaymentType PT ON P.PaymentTypeID = PT.PaymentTypeID
+RETURN
+GO
+-- need to check SQL again
+EXEC StudentPaymentTypes
+GO
