@@ -150,6 +150,40 @@ EXEC LookupClubMembers NULL
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'RemoveClubMembership')
     DROP PROCEDURE RemoveClubMembership
 GO
+-- sp_help Activity
+-- SELECT * FROM Activity
+--CREATE PROCEDURE RemoveClubMembership
+--	@ClubID varchar(10)
+--AS
+--	--Cach 1: write code like this (combine two conditions) will have the same result with teacher
+
+--	IF @ClubId IS NULL OR NOT EXISTS(SELECT ClubId FROM Club WHERE ClubId = @ClubId)
+--		RAISERROR('The parameter is required or duplicate value', 16, 1)
+--	ELSE BEGIN
+--		DELETE FROM Activity
+--		WHERE ClubId = @ClubID
+--		-- Any INSERT/ UPDATE / DELETE will affect the global @@ROWCOUNT value
+--		IF @@ROWCOUNT = 0
+--			RAISERROR('No members were deleted', 16, 1)
+--	END
+
+
+--	-- Cach 2: seperate into different condition will return not the same result, dont know why
+
+--	--IF @ClubID IS NULL
+--	--	RAISERROR('The parameter is required', 16, 1)
+--	--ELSE IF EXISTS (SELECT ClubId FROM Club WHERE ClubId = @ClubID)
+--	--	RAISERROR('Duplicate value', 16, 1)
+--	--ELSE BEGIN
+--	--	DELETE FROM Activity
+--	--	WHERE ClubId = @ClubID
+--	--	IF @@ROWCOUNT = 0
+--	--		RAISERROR('No members were deleted', 16, 1)
+--	--END
+
+--RETURN
+--GO
+
 CREATE PROCEDURE RemoveClubMembership
     -- Parameters here
     @ClubId     varchar(10)
@@ -174,8 +208,9 @@ AS
 RETURN
 GO
 -- Test the above sproc...
-EXEC RemoveClubMembership NULL
-EXEC RemoveClubMembership 'Drop Out'
+SELECT * FROM Activity
+EXEC RemoveClubMembership NULL -- error 1: parameter is required
+EXEC RemoveClubMembership 'Drop Out' -- error 1: it does not exist
 EXEC RemoveClubMembership 'NASA1'
 EXEC RemoveClubMembership 'CSS'
 EXEC RemoveClubMembership 'CSS' -- The second time this is run, there will be no members to remove
