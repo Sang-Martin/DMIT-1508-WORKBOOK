@@ -300,6 +300,7 @@ AS
         END
         ELSE
         BEGIN
+			-- DELETE FROM Foreign key table first, so DELETE Primary key table last
             BEGIN TRANSACTION
             DELETE  Registration 
             WHERE   StudentID = @StudentID
