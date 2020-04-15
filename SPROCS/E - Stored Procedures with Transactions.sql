@@ -34,6 +34,41 @@ GO
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'TransferCourse')
     DROP PROCEDURE TransferCourse
 GO
+
+--(SQ)
+--CREATE PROCEDURE TransferCourse
+--	@StudentID		int,
+--	@Semester		char(5),
+--	@LeaveCourseID	char(7),
+--	@EnterCourseID	char(7)
+--AS
+--	IF(@StudentID IS NULL OR @Semester IS NULL OR @LeaveCourseID IS NULL OR @EnterCourseID IS NULL)
+--		RAISERROR('All parameters are required', 16, 1)
+--	ELSE BEGIN
+--		BEGIN TRANSACTION
+--		UPDATE Registration
+--		SET WithdrawYN = 'Y'
+--		WHERE StudentID = @StudentID AND Semester = @Semester AND CourseId = @LeaveCourseID AND (WithdrawYN = 'N' OR WithdrawYN IS NULL)
+--		--check error
+--		IF @@ERROR <> 0 OR @@ROWCOUNT = 0 BEGIN
+--			RAISERROR('Unable withdraw student', 16, 1)
+--			ROLLBACK TRANSACTION
+--		END
+--		ELSE BEGIN
+--			INSERT INTO Registration(StudentID, Semester, CourseId)
+--			VALUES (@StudentID, @Semester, @EnterCourseID)
+--			--check
+--			IF @@ERROR <> 0 OR @@ROWCOUNT = 0 BEGIN
+--				RAISERROR ('Unable insert student', 16, 1)
+--				ROLLBACK TRANSACTION
+--			END
+--			ELSE
+--				COMMIT TRANSACTION
+--		END
+--	END
+--RETURN
+--GO
+
 CREATE PROCEDURE TransferCourse
     -- Parameters here
     @StudentID      int,
@@ -106,6 +141,7 @@ EXEC TransferCourse 199899200, '2004J', 'DMIT101', 'DMIT999'    -- Non-existing 
 IF EXISTS (SELECT * FROM INFORMATION_SCHEMA.ROUTINES WHERE ROUTINE_TYPE = N'PROCEDURE' AND ROUTINE_NAME = 'AdjustMarks')
     DROP PROCEDURE AdjustMarks
 GO
+
 CREATE PROCEDURE AdjustMarks
     -- Parameters here
     @CourseID   char(7)
